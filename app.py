@@ -13,7 +13,7 @@ def display_avg_bnb(data, year, city, metric):
     if city:
         data = data[data['City'] == city]
         avg = data[metric].mean()
-        st.metric(f"## Average BNNB in {year} : ", 'ZMW {:,.2f}'.format(avg))
+        st.metric(f"## Average BNNB in \n {year} : ", 'ZMW {:,.2f}'.format(avg))
 
 
 
@@ -25,7 +25,7 @@ def display_max_bnb(data, year, city, metric):
         maxbnb = (data[metric].max())
         data = data[data[metric] == maxbnb]
         month = data['Month'].values[0]
-        st.metric(f"## Highest BNNB Amount in {year} was recorded in {month} : ", 'ZMW {:,.2f}'.format(maxbnb))
+        st.metric(f"## Highest BNNB Amount in {year} \nwas recorded in {month} : ", 'ZMW {:,.2f}'.format(maxbnb))
 
 def display_min_bnb(data, year, city, metric):
     data = data[(data['Year'] == year)]
@@ -34,7 +34,7 @@ def display_min_bnb(data, year, city, metric):
         minbnb = (data[metric].min())
         data = data[data[metric] == minbnb]
         month = data['Month'].values[0]
-        st.metric(f"## Lowest BNNB Amount in {year} was recorded in {month} : ", 'ZMW {:,.2f}'.format(minbnb))
+        st.metric(f"## Lowest BNNB Amount in {year} \nwas recorded in {month} : ", 'ZMW {:,.2f}'.format(minbnb))
 
 
 def display_map(data, year, month):
