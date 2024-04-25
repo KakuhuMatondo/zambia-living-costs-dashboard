@@ -116,7 +116,7 @@ def main():
 
     #Display Metrics
 
-    st.subheader(f'{city} {month} {year} BNNB Facts and Figures')
+    st.subheader(f'{city} {year} BNNB Facts and Figures')
 
     col1, col2, col3 = st.columns(3)
     with col1:
