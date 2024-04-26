@@ -7,7 +7,7 @@ from streamlit_folium import st_folium
 APP_TITLE = 'Basic Needs and Nutrition Basket (BNNB) Cost Distributions by Major Cities'
 APP_SUB_TITLE = 'Source jctr.org.zm'
 
-
+@st.cache_data
 def display_avg_bnb(data, year, city, metric):
     data = data[(data['Year'] == year)]
     if city:
@@ -16,8 +16,7 @@ def display_avg_bnb(data, year, city, metric):
         st.metric(f"## Average BNNB in \n {year} : ", 'ZMW {:,.2f}'.format(avg))
 
 
-
-
+@st.cache_data
 def display_max_bnb(data, year, city, metric):
     data = data[(data['Year'] == year)]
     if city:
@@ -27,6 +26,8 @@ def display_max_bnb(data, year, city, metric):
         month = data['Month'].values[0]
         st.metric(f"## Highest BNNB Amount in {year} \n was recorded in {month} : ", 'ZMW {:,.2f}'.format(maxbnb))
 
+
+@st.cache_data
 def display_min_bnb(data, year, city, metric):
     data = data[(data['Year'] == year)]
     if city:
@@ -35,6 +36,12 @@ def display_min_bnb(data, year, city, metric):
         data = data[data[metric] == minbnb]
         month = data['Month'].values[0]
         st.metric(f"## Lowest BNNB Amount in {year} \n was recorded in {month} : ", 'ZMW {:,.2f}'.format(minbnb))
+@st.cache_data
+def load_data():
+    #Load Data
+    data = pd.read_csv("JCTR BNNB Data.csv")
+    data = data.drop("Monthly change in BNB", axis=1)
+    return data
 
 
 def display_map(data, year, month):
@@ -49,7 +56,6 @@ def display_map(data, year, month):
         key_on='feature.properties.NAME',
         line_opacity=0.8,
         highlight=True,
-
     )
     choropleth.geojson.add_to(map)
 
@@ -68,6 +74,7 @@ def display_map(data, year, month):
         folium.features.GeoJsonTooltip(['NAME', 'living cost'], labels=False)
     )
 
+
     st_map = st_folium(map, width=700, height=450)
 
     if st_map['last_active_drawing']:
@@ -77,42 +84,36 @@ def display_map(data, year, month):
 
 
 def display_filters(data):
-    year_list = sorted(np.array(data['Year'].unique(),dtype=int))
-    year = st.sidebar.selectbox('Year',year_list,len(year_list)-1)
+    year_list = sorted(np.array(data['Year'].unique(), dtype=int))
+    year = st.sidebar.selectbox('Year', year_list, len(year_list) - 1)
 
     month_list = np.array(data['Month'].unique())
-    month = st.sidebar.selectbox('Month',month_list)
+    month = st.sidebar.selectbox('Month', month_list)
 
-    return year,month
-def display_city_filter(data,city):
-    city_list =[''] + list(data['City'].unique())
+    return year, month
+
+
+def display_city_filter(data, city):
+    city_list = [''] + list(data['City'].unique())
     city_index = city_list.index(city)
     st.write(city_index)
 
-    return st.sidebar.selectbox('City',city_list,city_index)
-
-
+    return st.sidebar.selectbox('City', city_list, city_index)
 
 def main():
     st.set_page_config(APP_TITLE)
     st.title(APP_TITLE)
     st.caption(APP_SUB_TITLE)
+    data=load_data()
 
-    #Load Data
-    data = pd.read_csv("JCTR BNNB Data.csv")
-    data = data.drop("Monthly change in BNB", axis=1)
     metric = 'TotalBNBImputed'
 
+    st.caption('_Cities with Available data are highlighted. Data for Lusaka is available in all years._')
 
     #Display Filters & Map
     year, month = display_filters(data)
     city = display_map(data, year, month)
     city = display_city_filter(data, city)
-
-
-
-
-
 
     #Display Metrics
 
